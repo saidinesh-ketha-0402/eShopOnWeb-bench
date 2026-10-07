@@ -12,4 +12,12 @@ public static class BasketGuards
         if (!basketItems.Any())
             throw new EmptyBasketOnCheckoutException();
     }
+
+    public static void InvalidCoupon(this IGuardClause guardClause, bool isInvalid, string message)
+    {
+        if (isInvalid)
+        {
+            throw new InvalidCouponException(message);
+        }
+    }
 }

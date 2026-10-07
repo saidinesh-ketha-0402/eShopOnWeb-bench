@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using Ardalis.GuardClauses;
 using Microsoft.eShopWeb.ApplicationCore.Interfaces;
 
@@ -22,6 +23,10 @@ public class Order : BaseEntity, IAggregateRoot
     public string BuyerId { get; private set; }
     public DateTimeOffset OrderDate { get; private set; } = DateTimeOffset.Now;
     public Address ShipToAddress { get; private set; }
+    [NotMapped]
+    public string? CouponCode { get; private set; }
+    [NotMapped]
+    public decimal DiscountAmount { get; private set; }
 
     // DDD Patterns comment
     // Using a private collection field, better for DDD Aggregate's encapsulation
@@ -43,5 +48,15 @@ public class Order : BaseEntity, IAggregateRoot
             total += item.UnitPrice * item.Units;
         }
         return total;
+    }
+
+    public decimal Subtotal()
+    {
+        throw new NotImplementedException();
+    }
+
+    public void ApplyDiscount(string couponCode, decimal discountAmount)
+    {
+        throw new NotImplementedException();
     }
 }

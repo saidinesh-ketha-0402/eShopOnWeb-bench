@@ -8,6 +8,7 @@ namespace Microsoft.eShopWeb.ApplicationCore.Entities.BasketAggregate;
 public class Basket : BaseEntity, IAggregateRoot
 {
     public string BuyerId { get; private set; }
+    public string? CouponCode { get; private set; }
     private readonly List<BasketItem> _items = new List<BasketItem>();
     public IReadOnlyCollection<BasketItem> Items => _items.AsReadOnly();
 
@@ -38,5 +39,20 @@ public class Basket : BaseEntity, IAggregateRoot
     public void SetNewBuyerId(string buyerId)
     {
         BuyerId = buyerId;
+    }
+
+    public void ApplyCoupon(string code)
+    {
+        CouponCode = NormalizeCouponCode(code);
+    }
+
+    public void RemoveCoupon()
+    {
+        CouponCode = null;
+    }
+
+    private static string NormalizeCouponCode(string code)
+    {
+        return Guard.Against.NullOrWhiteSpace(code, nameof(code)).Trim().ToUpperInvariant();
     }
 }

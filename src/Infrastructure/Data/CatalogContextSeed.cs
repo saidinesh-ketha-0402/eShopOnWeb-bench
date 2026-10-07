@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.eShopWeb.ApplicationCore.Entities;
+using Microsoft.eShopWeb.ApplicationCore.Entities.CouponAggregate;
 using Microsoft.Extensions.Logging;
 
 namespace Microsoft.eShopWeb.Infrastructure.Data;
@@ -41,6 +42,14 @@ public class CatalogContextSeed
             {
                 await catalogContext.CatalogItems.AddRangeAsync(
                     GetPreconfiguredItems());
+
+                await catalogContext.SaveChangesAsync();
+            }
+
+            if (!await catalogContext.Coupons.AnyAsync())
+            {
+                await catalogContext.Coupons.AddRangeAsync(
+                    GetPreconfiguredCoupons());
 
                 await catalogContext.SaveChangesAsync();
             }
@@ -97,5 +106,16 @@ public class CatalogContextSeed
                 new(3,2, "Cup<T> Sheet", "Cup<T> Sheet", 8.5M, "http://catalogbaseurltobereplaced/images/products/11.png"),
                 new(2,5, "Prism White TShirt", "Prism White TShirt", 12, "http://catalogbaseurltobereplaced/images/products/12.png")
             };
+    }
+
+    static IEnumerable<Coupon> GetPreconfiguredCoupons()
+    {
+        return new List<Coupon>
+        {
+            new("WELCOME10", DiscountType.Percentage, 10m),
+            new("SAVE5", DiscountType.FixedAmount, 5m, minimumBasketTotal: 20m),
+            new("EXPIRED20", DiscountType.Percentage, 20m, expiresUtc: DateTime.UtcNow.AddDays(-1)),
+            new("ONCEONLY", DiscountType.FixedAmount, 3m, maxRedemptions: 1)
+        };
     }
 }
